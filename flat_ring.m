@@ -185,7 +185,7 @@ for i=1:1
     imagesc(top_img); 
     find(image_ball);
     ind = find(image_ball);
-    (ind) = 255;
+    ind = 255;
    
     histogram(red_img)
     top_img(:,:,1) = image_red;

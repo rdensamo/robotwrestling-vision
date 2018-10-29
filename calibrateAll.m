@@ -1,3 +1,3 @@
-flat_points = ringCalibrate('/home/vader/matlabCode/data/orangeM.bag', 1);
-result = colorCalibrate( '/home/vader/matlabCode/data/orangeM.bag', 1)
-trackRobot( '/home/vader/matlabCode/data/orangeM.bag', result, 1)
+flat_points = ringCalibrate('/home/vader/matlabCode/data/noexp2.bag', 1);
+thresh = colorCalibrate( '/home/vader/matlabCode/data/noexp2.bag', 1)
+trackRobot( '/home/vader/matlabCode/data/noexp2.bag', thresh, 0)
