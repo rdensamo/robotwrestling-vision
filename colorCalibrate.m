@@ -19,8 +19,7 @@ msg = readMessages(bagselect0,1);
 % Extracts the [r g b] values from all points in the PointCloud2 object,
 pcrgb = readRGB(msg{1});
 
-% Converts RGB colors to HSV 
-hsv_pts = rgb2hsv(pcrgb); 
+
 
 % HSV standard deviation values 
 HS_sigma = 3; 
@@ -28,27 +27,40 @@ V_sigma = 10;
 
 % reshapes the image into the correct pixel dimensions
 top_img = reshape(pcrgb,640,480,3); 
-if option == 1
-    % may not be necessary 
-    top_img = imrotate(top_img, 90); 
-    figure; 
-    imagesc(top_img);
-end
+top_img = imrotate(top_img, 90);
+% Converts RGB colors to HSV 
+hsv_pts = rgb2hsv(top_img); 
+
+% prepare for image close operation on each color (left and right) -- needs to be in a function
+%begin function
+figure; 
+imagesc(hsv_pts); % this should be hsv_pts not top_img right ?? 
 % Allows you to select the polygone with the organge colors
-mask = roipoly; % select left target 
-mask_right = roipoly; % select right target
+mask_l = roipoly; % select left target 
+mask_r = roipoly; % select right target
+
+% do image close operation
+se =  strel('square',25); %what should be the arguments for this ?? 
+closed_mL = imclose(mask_l,se); 
+closed_mR = imclose(mask_r,se); 
+
 if option == 1
     % Visualize selected region
-    imagesc(mask);
+    figure; 
+    imagesc(closed_mL);
+    figure; 
+    imagesc(closed_mR);
 end
+
+%end function
 
 %TODO: Comment this section 
 image_red = top_img(:,:,1); 
 image_green = top_img(:,:,2); 
 image_blue = top_img(:,:,3);     
-red_pix = image_red(mask); 
-green_pix = image_green(mask);
-blue_pix = image_blue(mask); 
+red_pix = image_red(mask_l); 
+green_pix = image_green(mask_l);
+blue_pix = image_blue(mask_l); 
 
 
 green_std = std(single(green_pix)); 
