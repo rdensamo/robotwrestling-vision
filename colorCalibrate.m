@@ -2,7 +2,7 @@ function [rgb_thresh] = colorCalibrate(filepath, option)
 %colorCalibrate takes bag file path and opion argument for graphing
 %   This function gets the color calibration from a bag file 
 %   returns the red, green, blue means and stds 
-%TODO: returning the mask might not be necessary 
+
 
 % filepath = '/home/vader/matlabCode/data/oct5bag.bag'
 
@@ -15,18 +15,28 @@ close all;
 num_sigmas = 4;
 
 % Gets the first frame 
-msg = readMessages(bagselect0,3);
+msg = readMessages(bagselect0,1);
 % Extracts the [r g b] values from all points in the PointCloud2 object,
 pcrgb = readRGB(msg{1});
+
+% Converts RGB colors to HSV 
+hsv_pts = rgb2hsv(pcrgb); 
+
+% HSV standard deviation values 
+HS_sigma = 3; 
+V_sigma = 10; 
+
 % reshapes the image into the correct pixel dimensions
-% TODO: this might need to be 480 by 640 instead and validate comment above
 top_img = reshape(pcrgb,640,480,3); 
 if option == 1
+    % may not be necessary 
+    top_img = imrotate(top_img, 90); 
     figure; 
     imagesc(top_img);
 end
 % Allows you to select the polygone with the organge colors
-mask = roipoly; 
+mask = roipoly; % select left target 
+mask_right = roipoly; % select right target
 if option == 1
     % Visualize selected region
     imagesc(mask);
