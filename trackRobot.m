@@ -17,7 +17,7 @@ close all;
 % TODO: Install VLC to view this video format
 if(vid_name == 1)
     pause on;  %enable pause function
-    v = VideoWriter('robot_tracking_matt.avi');
+    v = VideoWriter('robot_tracking_matt_new.avi');
     open(v);
 end
 

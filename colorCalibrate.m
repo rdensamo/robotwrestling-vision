@@ -1,4 +1,4 @@
-function [rgb_thresh] = colorCalibrate(filepath, option)
+function [hsv_thresh] = colorCalibrate(filepath, option)
 %colorCalibrate takes bag file path and opion argument for graphing
 %   This function gets the color calibration from a bag file 
 %   returns the red, green, blue means and stds 
@@ -22,8 +22,9 @@ pcrgb = readRGB(msg{1});
 
 
 % HSV standard deviation values 
-HS_sigma = 3; 
-V_sigma = 10; 
+h_sigma = 3; 
+s_sigma = 3; 
+v_sigma = 10; 
 
 % reshapes the image into the correct pixel dimensions
 top_img = reshape(pcrgb,640,480,3); 
@@ -32,7 +33,7 @@ top_img = imrotate(top_img, 90);
 hsv_pts = rgb2hsv(top_img); 
 
 % prepare for image close operation on each color (left and right) -- needs to be in a function
-%begin function
+%begin function f1-------------------
 figure; 
 imagesc(hsv_pts); % this should be hsv_pts not top_img right ?? 
 % Allows you to select the polygone with the organge colors
@@ -40,7 +41,7 @@ mask_l = roipoly; % select left target
 mask_r = roipoly; % select right target
 
 % do image close operation
-se =  strel('square',25); %what should be the arguments for this ?? 
+se =  strel('square', 25); %what should be the arguments for this ?? 
 closed_mL = imclose(mask_l,se); 
 closed_mR = imclose(mask_r,se); 
 
@@ -52,51 +53,119 @@ if option == 1
     imagesc(closed_mR);
 end
 
-%end function
 
 %TODO: Comment this section 
-image_red = top_img(:,:,1); 
-image_green = top_img(:,:,2); 
-image_blue = top_img(:,:,3);     
-red_pix = image_red(mask_l); 
-green_pix = image_green(mask_l);
-blue_pix = image_blue(mask_l); 
+% image_red = top_img(:,:,1); 
+% image_green = top_img(:,:,2); 
+% image_blue = top_img(:,:,3);     
+% red_pix = image_red(mask_l); 
+% green_pix = image_green(mask_l);
+% blue_pix = image_blue(mask_l); 
 
+% TODO: Need to call another function for this --redundant 
+%begin f2
+%Not do not have red, green, blue values just
+% hue, sat, and val 
+hsv_hue = hsv_pts(:,:,1);
+hsv_sat = hsv_pts(:,:,2); 
+hsv_val = hsv_pts(:,:,3); 
 
-green_std = std(single(green_pix)); 
-blue_std = std(single(blue_pix)); 
-red_std = std(single(red_pix)); 
-green_mean = mean(green_pix);
-blue_mean = mean(blue_pix);
-red_mean = mean(red_pix); 
+% left target
+% ----------------------------------------------------call func3
+hue_pix_l = hsv_hue(closed_mL);
+sat_pix_l = hsv_sat(closed_mL);
+val_pix_l = hsv_val(closed_mL);
+hue_mean_l = mean(hue_pix_l); 
+sat_mean_l = mean(sat_pix_l); 
+val_mean_l = mean(val_pix_l); 
+hue_std_l = std(single(hue_pix_l)); 
+sat_std_l = std(single(sat_pix_l));
+val_std_l = std(single(val_pix_l)); 
+% threshold calulations 
+hue_low_l = (hue_mean_l  - (h_sigma * hue_std_l)); 
+hue_high_l = (hue_mean_l  + (h_sigma * hue_std_l)); 
+sat_low_l =  (sat_mean_l  - (s_sigma * sat_std_l)); 
+sat_high_l = (sat_mean_l  + (s_sigma * sat_std_l)); 
+val_low_l = (val_mean_l  - (v_sigma * val_std_l)); 
+val_high_l = (val_mean_l  + (v_sigma * val_std_l)); 
+%---------------------------------------------------------end func3
 
-% TODO: Might not want to hard code the 2 
-red_low = (red_mean - (num_sigmas * red_std)); 
-red_high = (red_mean + (num_sigmas * red_std)); 
-green_low = (green_mean - (num_sigmas * green_std)); 
-green_high = (green_mean + (num_sigmas * green_std)); 
-blue_low = (blue_mean - (num_sigmas * blue_std)); 
-blue_high = (blue_mean + (num_sigmas * blue_std)); 
+%right target
+% ----------------------------------------------------call func3
+hue_pix_r = hsv_hue(closed_mR);
+sat_pix_r = hsv_sat(closed_mR);
+val_pix_r = hsv_val(closed_mR);
+hue_mean_r = mean(hue_pix_r); 
+sat_mean_r = mean(sat_pix_r); 
+val_mean_r = mean(val_pix_r); 
+hue_std_r = std(single(hue_pix_r)); 
+sat_std_r = std(single(sat_pix_r));
+val_std_r = std(single(val_pix_r)); 
+% threshold calulations 
+hue_low_r = (hue_mean_r  - (h_sigma * hue_std_r)); 
+hue_high_r = (hue_mean_r  + (h_sigma * hue_std_r)); 
+sat_low_r =  (sat_mean_r  - (s_sigma * sat_std_r)); 
+sat_high_r = (sat_mean_r  + (s_sigma * sat_std_r)); 
+val_low_r = (val_mean_r  - (v_sigma * val_std_r)); 
+val_high_r = (val_mean_r  + (v_sigma * val_std_r)); 
+
+% ----------------------------------------------------end func3
+
+%end f2
+
 
 % We are returning the thresholds to use in tracking the robot
-rgb_thresh = [red_low red_high green_low green_high blue_low blue_high];
+hsv_thresh_l =  [hue_low_l hue_high_l sat_low_l sat_high_l val_low_l val_high_l];
+hsv_thresh_r =  [hue_low_r hue_high_r sat_low_r sat_high_r val_low_r val_high_r];
 
-image_ball = image_red >= red_low & image_red <= red_high & image_green >= green_low & image_green <= green_high & image_blue >= blue_low & image_blue <= blue_high;
- 
+
+%end function f1 ---------------
+
+hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
+hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
+
+% image_ball = image_red >= red_low & image_red <= red_high & image_green >= green_low & image_green <= green_high & image_blue >= blue_low & image_blue <= blue_high;
+
 if option == 1 
-    plot3(blue_pix, red_pix, green_pix, '.'); 
-    axis( [0 255 0 255 0 255]);  
-    % Will be redoing this part continually for trackRobot function
-    % However still want to do it in the calibration for verificaiton 
+     figure 
+     plot3(hue_pix_l, sat_pix_l, val_pix_l, '<'); 
+     axis( [0 255 0 255 0 255]);
+     figure 
+     plot3(hue_pix_r, sat_pix_r, val_pix_r, '>'); 
+     axis( [0 255 0 255 0 255]);  
+%     % Will be redoing this part continually for trackRobot function
+%     % However still want to do it in the calibration for verificaiton 
+         
+         
+         
+        imagesc(top_img);
+        ind_l = find(hsv_ball_l)
+        ind_r =  find(hsv_ball_r)
+        
+        % want to use regionprops  instead of finding median value 
+        reg_lev = 0.3;
+        %replaces all values greater than 0.3 with 1 
+        bin_l = im2bw(closed_mL(ind_l), reg_lev); %may already be binary just closed_mL(ind_l)
+        bin_r = im2bw(closed_mR(ind_r), reg_lev); %may already be binary just closed_mR(ind_r)
+        
+        % call another function here 
+        %left
+        stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
+        [max_l,index_l] = max([stats_l.Area]);
+        %right
+        stats_r = regionprops(bin_r, 'Area', 'BoundingBox', 'Centroid'); 
+        [max_r,index_r] = max([stats_r.Area]);
+        disp(index_l);
+        
+        %disp(closed_mR(ind_r)); 
+        [rows_l, cols_l] = ind2sub([640 480],ind_l);
+        [rows_r, cols_r] = ind2sub([640 480], ind_r);
 
-    %TODO: might need to chage to 640 by 480 instead 
-    imagesc(top_img);
-    find(image_ball);
-    [rows, cols] = ind2sub([640 480], find(image_ball));
-    m_r = median(rows);
-    m_c = median(cols); 
-    hold on; 
-    h = plot(median(cols),median(rows),'b+', 'markersize', 20,'linewidth',2);  
+%     m_r = median(rows);
+%     m_c = median(cols); 
+        hold on; 
+        h_l = plot(median(cols),median(rows),'b+', 'markersize', 20,'linewidth',2);  
+        h_r = plot(median(cols),median(rows),'r+', 'markersize', 20,'linewidth',2);  
 end 
 
 end
