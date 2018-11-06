@@ -41,16 +41,16 @@ mask_l = roipoly; % select left target
 mask_r = roipoly; % select right target
 
 % do image close operation
-se =  strel('square', 25); %what should be the arguments for this ?? 
-closed_mL = imclose(mask_l,se); 
-closed_mR = imclose(mask_r,se); 
+%se =  strel('square', 25); %what should be the arguments for this ?? 
+bin_l = imclose(mask_l,ones(3)); 
+bin_r = imclose(mask_r,ones(3)); 
 
 if option == 1
     % Visualize selected region
     figure; 
-    imagesc(closed_mL);
+    imagesc(bin_l);
     figure; 
-    imagesc(closed_mR);
+    imagesc(bin_r);
 end
 
 
@@ -72,9 +72,9 @@ hsv_val = hsv_pts(:,:,3);
 
 % left target
 % ----------------------------------------------------call func3
-hue_pix_l = hsv_hue(closed_mL);
-sat_pix_l = hsv_sat(closed_mL);
-val_pix_l = hsv_val(closed_mL);
+hue_pix_l = hsv_hue(bin_l);
+sat_pix_l = hsv_sat(bin_l);
+val_pix_l = hsv_val(bin_l);
 hue_mean_l = mean(hue_pix_l); 
 sat_mean_l = mean(sat_pix_l); 
 val_mean_l = mean(val_pix_l); 
@@ -92,9 +92,9 @@ val_high_l = (val_mean_l  + (v_sigma * val_std_l));
 
 %right target
 % ----------------------------------------------------call func3
-hue_pix_r = hsv_hue(closed_mR);
-sat_pix_r = hsv_sat(closed_mR);
-val_pix_r = hsv_val(closed_mR);
+hue_pix_r = hsv_hue(bin_r);
+sat_pix_r = hsv_sat(bin_r);
+val_pix_r = hsv_val(bin_r);
 hue_mean_r = mean(hue_pix_r); 
 sat_mean_r = mean(sat_pix_r); 
 val_mean_r = mean(val_pix_r); 
@@ -124,6 +124,8 @@ hsv_thresh_r =  [hue_low_r hue_high_r sat_low_r sat_high_r val_low_r val_high_r]
 hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
 hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
 
+bin_l = imclose(hsv_ball_l,ones(3)); 
+bin_r = imclose(hsv_ball_r, ones(3)); 
 % image_ball = image_red >= red_low & image_red <= red_high & image_green >= green_low & image_green <= green_high & image_blue >= blue_low & image_blue <= blue_high;
 
 if option == 1 
@@ -139,25 +141,34 @@ if option == 1
          
          
         imagesc(top_img);
-        ind_l = find(hsv_ball_l)
-        ind_r =  find(hsv_ball_r)
+%         ind_l = find(hsv_ball_l);
+%         ind_r =  find(hsv_ball_r);
         
         % want to use regionprops  instead of finding median value 
-        reg_lev = 0.3;
+    %    reg_lev = 0.3;
         %replaces all values greater than 0.3 with 1 
-        bin_l = im2bw(closed_mL(ind_l), reg_lev); %may already be binary just closed_mL(ind_l)
-        bin_r = im2bw(closed_mR(ind_r), reg_lev); %may already be binary just closed_mR(ind_r)
+    %    bin_l = im2bw(closed_mL(ind_l), reg_lev); %may already be binary just closed_mL(ind_l)
+       % bin_r = im2bw(closed_mR(ind_r), reg_lev); %may already be binary just closed_mR(ind_r)
         
+%        bin_l = bin_l(ind_l); 
+%        bin_r = bin_r(ind_r); 
+       
         % call another function here 
         %left
         stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
         [max_l,index_l] = max([stats_l.Area]);
+        
+        % Gets the centroids of all the blobs from the stats struct array 
+        centers_l = cat(1,stats_l.Centroid);
+        
         %right
         stats_r = regionprops(bin_r, 'Area', 'BoundingBox', 'Centroid'); 
         [max_r,index_r] = max([stats_r.Area]);
-        disp(index_l);
+       disp(index_r);
+         % Gets the centroids of all the blobs from the stats struct array 
+        centers_r = cat(1,stats_r.Centroid);
         
-        %disp(closed_mR(ind_r)); 
+        %disp(clocened_mR(ind_r)); 
         [rows_l, cols_l] = ind2sub([640 480],ind_l);
         [rows_r, cols_r] = ind2sub([640 480], ind_r);
 
