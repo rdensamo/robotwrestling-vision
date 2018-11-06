@@ -159,24 +159,30 @@ if option == 1
         [max_l,index_l] = max([stats_l.Area]);
         
         % Gets the centroids of all the blobs from the stats struct array 
-        centers_l = cat(1,stats_l.Centroid);
+        %centers_l = cat(1,stats_l.Centroid);
         
         %right
         stats_r = regionprops(bin_r, 'Area', 'BoundingBox', 'Centroid'); 
-        [max_r,index_r] = max([stats_r.Area]);
+        stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
+        [max_r, index_r] = max([stats_r.Area]);
+        [max_l, index_l] = max([stats_l.Area]); 
+        
        disp(index_r);
          % Gets the centroids of all the blobs from the stats struct array 
         centers_r = cat(1,stats_r.Centroid);
+        centers_l = cat(1,stats_l.Centroid); 
         
         %disp(clocened_mR(ind_r)); 
-        [rows_l, cols_l] = ind2sub([640 480],ind_l);
-        [rows_r, cols_r] = ind2sub([640 480], ind_r);
+%        [rows_l, cols_l] = ind2sub([640 480],ind_l);
+   %     [rows_r, cols_r] = ind2sub([640 480], ind_r);
 
 %     m_r = median(rows);
 %     m_c = median(cols); 
         hold on; 
-        h_l = plot(median(cols),median(rows),'b+', 'markersize', 20,'linewidth',2);  
-        h_r = plot(median(cols),median(rows),'r+', 'markersize', 20,'linewidth',2);  
+        %plot(centers_r(index_r,1),centers_r(index_r,2),'r+')
+       % h_l = plot(median(cols),median(rows),'b+', 'markersize', 20,'linewidth',2);  
+        h_l = plot(centers_l(index_l,1),centers_l(index_l,2),'b+', 'markersize', 20,'linewidth',2);  
+        h_r = plot(centers_r(index_r,1),centers_r(index_r,2),'r+', 'markersize', 20,'linewidth',2);  
 end 
 
 end
