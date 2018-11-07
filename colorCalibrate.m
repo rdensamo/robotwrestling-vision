@@ -1,4 +1,4 @@
-function [hsv_thresh] = colorCalibrate(filepath, option)
+function [hsv_thresh_l, hsv_thresh_r] = colorCalibrate(filepath, option)
 %colorCalibrate takes bag file path and opion argument for graphing
 %   This function gets the color calibration from a bag file 
 %   returns the red, green, blue means and stds 
