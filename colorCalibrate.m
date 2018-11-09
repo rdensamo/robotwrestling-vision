@@ -37,13 +37,18 @@ hsv_pts = rgb2hsv(top_img);
 figure; 
 imagesc(hsv_pts); % this should be hsv_pts not top_img right ?? 
 % Allows you to select the polygone with the organge colors
-mask_l = roipoly; % select left target 
-mask_r = roipoly; % select right target
+bin_l = roipoly; % select left target 
+bin_r = roipoly; % select right target
 
 % do image close operation
 %se =  strel('square', 25); %what should be the arguments for this ?? 
-bin_l = imclose(mask_l,ones(3)); 
-bin_r = imclose(mask_r,ones(3)); 
+
+%this is a mistake should not close before
+%replace with just mask
+%bin_l = imclose(mask_l,ones(3)); 
+%bin_r = imclose(mask_r,ones(3)); 
+
+
 
 if option == 1
     % Visualize selected region
