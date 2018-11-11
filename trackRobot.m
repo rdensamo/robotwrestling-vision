@@ -1,4 +1,5 @@
 function [x_pos, y_pos, theta] = trackRobot(filepath, hsv_thresh_l, hsv_thresh_r, vid_name)
+% TODO: Fix this function comment 
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 % returns the position and orientation of the robot: x_pos, y_pos and theta 
 % trackRobot Summary of this function goes here
@@ -6,7 +7,6 @@ function [x_pos, y_pos, theta] = trackRobot(filepath, hsv_thresh_l, hsv_thresh_r
 %   Detailed explanation goes here
 
 
-% filepath = '/home/vader/matlabCode/data/oct5bag.bag'
 
 % Gets ros bag that has the depth and color data (topic)
 bag = rosbag(filepath);
