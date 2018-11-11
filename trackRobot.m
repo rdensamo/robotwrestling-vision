@@ -1,6 +1,6 @@
-function [med_r,med_c] = trackRobot(filepath, thresh, vid_name)
+function [x_pos, y_pos, theta] = trackRobot(filepath, thresh_l, thresh_r, vid_name)
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
-% rgbVals: first row is means, second row is stds (in rgb col order)
+% returns the position and orientation of the robot: x_pos, y_pos and theta 
 % trackRobot Summary of this function goes here
 %   if vid_name = 1 records a movie
 %   Detailed explanation goes here
@@ -17,7 +17,7 @@ close all;
 % TODO: Install VLC to view this video format
 if(vid_name == 1)
     pause on;  %enable pause function
-    v = VideoWriter('robot_tracking_matt_new.avi');
+    v = VideoWriter('robot_tracking_matt_alien.avi');
     open(v);
 end
 
