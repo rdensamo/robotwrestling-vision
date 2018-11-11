@@ -126,8 +126,10 @@ hsv_thresh_r =  [hue_low_r hue_high_r sat_low_r sat_high_r val_low_r val_high_r]
 
 %end function f1 ---------------
 
-hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
-hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
+%hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
+hsv_ball_l = hsv_hue >= hsv_thresh_l(1) & hsv_hue <= hsv_thresh_l(2) & hsv_sat >= hsv_thresh_l(3) & hsv_sat <= hsv_thresh_l(4) & hsv_val >= hsv_thresh_l(5) & hsv_val <= hsv_thresh_l(6);  
+%hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
+hsv_ball_r = hsv_hue >= hsv_thresh_r(1) & hsv_hue <= hsv_thresh_r(2) & hsv_sat >= hsv_thresh_r(3) & hsv_sat <= hsv_thresh_r(4) & hsv_val >= hsv_thresh_r(5) & hsv_val <= hsv_thresh_r(6); 
 
 bin_l = imclose(hsv_ball_l,ones(3)); 
 bin_r = imclose(hsv_ball_r, ones(3)); 
@@ -171,8 +173,8 @@ if option == 1
         stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
         [max_r, index_r] = max([stats_r.Area]);
         [max_l, index_l] = max([stats_l.Area]); 
-        
-       disp(index_r);
+        %
+     %  disp(index_r);
          % Gets the centroids of all the blobs from the stats struct array 
         centers_r = cat(1,stats_r.Centroid);
         centers_l = cat(1,stats_l.Centroid); 

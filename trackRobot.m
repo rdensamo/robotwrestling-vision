@@ -1,4 +1,4 @@
-function [x_pos, y_pos, theta] = trackRobot(filepath, thresh_l, thresh_r, vid_name)
+function [x_pos, y_pos, theta] = trackRobot(filepath, hsv_thresh_l, hsv_thresh_r, vid_name)
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 % returns the position and orientation of the robot: x_pos, y_pos and theta 
 % trackRobot Summary of this function goes here
@@ -31,9 +31,12 @@ for i=1:bagselect0.NumMessages
     hsv_sat = hsv_pts(:,:,2); 
     hsv_val = hsv_pts(:,:,3); 
     
-    hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
-    hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
+    hsv_ball_l = hsv_hue >= hsv_thresh_l(1) & hsv_hue <= hsv_thresh_l(2) & hsv_sat >= hsv_thresh_l(3) & hsv_sat <= hsv_thresh_l(4) & hsv_val >= hsv_thresh_l(5) & hsv_val <= hsv_thresh_l(6);  
+    hsv_ball_r = hsv_hue >= hsv_thresh_r(1) & hsv_hue <= hsv_thresh_r(2) & hsv_sat >= hsv_thresh_r(3) & hsv_sat <= hsv_thresh_r(4) & hsv_val >= hsv_thresh_r(5) & hsv_val <= hsv_thresh_r(6); 
     
+    bin_l = imclose(hsv_ball_l,ones(3)); 
+    bin_r = imclose(hsv_ball_r, ones(3)); 
+
     if ( i == 1)
         f = figure;
         im = imagesc(top_img);
@@ -47,33 +50,44 @@ for i=1:bagselect0.NumMessages
     end
     
     im = imagesc(top_img);
-    image_red = top_img(:,:,1);
-    image_green = top_img(:,:,2);
-    image_blue = top_img(:,:,3);
+%     image_red = top_img(:,:,1);
+%     image_green = top_img(:,:,2);
+%     image_blue = top_img(:,:,3);
+%     
+%     
+%     image_ball = image_red >= thresh(1) & image_red <= thresh(2) & ...
+%         image_green >= thresh(3) & image_green <= thresh(4) & ...
+%         image_blue >= thresh(5) & image_blue <= thresh(6);
+%     image_ball = imclose(image_ball, ones(3));
     
-    
-    image_ball = image_red >= thresh(1) & image_red <= thresh(2) & ...
-        image_green >= thresh(3) & image_green <= thresh(4) & ...
-        image_blue >= thresh(5) & image_blue <= thresh(6);
-    image_ball = imclose(image_ball, ones(3));
-    
-    ind = find(image_ball);
-    image_red(ind) = 0;
-    top_img(:,:,1) = image_red;
-    [rows, cols] = ind2sub([640 480], ind);
-    imagesc(top_img);
-    
-    m_r = median(rows);
-    m_c = median(cols);
-    
+%     ind = find(image_ball);
+%     image_red(ind) = 0;
+%     top_img(:,:,1) = image_red;
+%     [rows, cols] = ind2sub([640 480], ind);
+%     imagesc(top_img);
+%     
+%     m_r = median(rows);
+%     m_c = median(cols);
+%     
     
     if ( i ~= 1 )
         im = imagesc(top_img);
     end
-    
+     stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
+     [max_l,index_l] = max([stats_l.Area]);
+     stats_r = regionprops(bin_r, 'Area', 'BoundingBox', 'Centroid'); 
+        stats_l = regionprops(bin_l, 'Area', 'BoundingBox', 'Centroid'); 
+        [max_r, index_r] = max([stats_r.Area]);
+        [max_l, index_l] = max([stats_l.Area]); 
+        
+       %disp(index_r);
+         % Gets the centroids of all the blobs from the stats struct array 
+        centers_r = cat(1,stats_r.Centroid);
+        centers_l = cat(1,stats_l.Centroid); 
+        
     hold on;
-    h = plot(median(cols),median(rows),'b+', 'markersize', 20,'linewidth',2);
-    drawnow;
+      h_l = plot(centers_l(index_l,1),centers_l(index_l,2),'b+', 'markersize', 20,'linewidth',2);  
+        h_r = plot(centers_r(index_r,1),centers_r(index_r,2),'r+', 'markersize', 20,'linewidth',2);  
 end
 
 if(vid_name == 1)
