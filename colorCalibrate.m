@@ -62,6 +62,6 @@ if option == 1
      
         h_l = plot(x_target_l, y_target_l,'b+', 'markersize', 20,'linewidth',2);  
         h_r = plot(x_target_r, y_target_r,'r+', 'markersize', 20,'linewidth',2);  
-end 
+end gi
 
 end
