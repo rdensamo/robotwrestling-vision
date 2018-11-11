@@ -25,6 +25,14 @@ for i=1:bagselect0.NumMessages
     msg = readMessages(bagselect0,i);
     pcrgb = readRGB(msg{1});
     top_img = reshape(pcrgb,640,480,3);
+    % hue, sat, and val 
+    hsv_pts = rgb2hsv(top_img); 
+    hsv_hue = hsv_pts(:,:,1);
+    hsv_sat = hsv_pts(:,:,2); 
+    hsv_val = hsv_pts(:,:,3); 
+    
+    hsv_ball_l = hsv_hue >= hue_low_l & hsv_hue <= hue_high_l & hsv_sat>= sat_low_l & hsv_sat <= sat_high_l & hsv_val >= val_low_l & hsv_val <= val_high_l ;
+    hsv_ball_r = hsv_hue >= hue_low_r & hsv_hue <= hue_high_r & hsv_sat>= sat_low_r & hsv_sat <= sat_high_r & hsv_val >= val_low_r & hsv_val <= val_high_r ;
     
     if ( i == 1)
         f = figure;
