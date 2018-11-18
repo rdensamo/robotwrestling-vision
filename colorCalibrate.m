@@ -49,10 +49,12 @@ end
 init_thresh = [h_sigma, s_sigma, v_sigma]; 
 
 % left target
-[bin_l, hsv_thresh_l] = seg_color(hsv_pts, mask_l, init_thresh);
+[hsv_thresh_l] = getThresh(hsv_pts, mask_l, init_thresh);
+[bin_l] = seg_color(hsv_pts, hsv_thresh_l);
 [x_target_l, y_target_l] = gettarget(bin_l); 
 % right target 
-[bin_r,hsv_thresh_r] = seg_color(hsv_pts, mask_r, init_thresh); 
+[hsv_thresh_r] = getThresh(hsv_pts, mask_r, init_thresh);
+[bin_r] = seg_color(hsv_pts, hsv_thresh_r); 
 [x_target_r, y_target_r] = gettarget(bin_r); 
 
 if option == 1 

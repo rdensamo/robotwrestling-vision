@@ -1,5 +1,5 @@
-function hsv_thresh = getThresh(inputArg1,inputArg2)
-%UNTITLED2 Summary of this function goes here
+function [hsv_thresh] = getThresh(hsv_pts, mask, init_thresh)
+%UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 h_sigma = init_thresh(1); 
 s_sigma = init_thresh(2); 
@@ -30,5 +30,5 @@ val_high = (val_mean  + (v_sigma * val_std));
 
 hsv_thresh = [hue_low hue_high sat_low sat_high val_low val_high];
 
-end
 
+end
