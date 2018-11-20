@@ -87,20 +87,7 @@ rob_theta = atan2(sin(rob_theta),cos(rob_theta));
 disp("rotated rob_theta: "); 
 disp(rob_theta); 
 
-% 
-% disp("left target"); 
-% disp(x_real_l);
-% disp(y_real_l); 
-% disp("right target"); 
-% disp(x_real_r);
-% disp(y_real_r); 
-% 
-% disp("x target"); 
-% disp(x_target_l)
-% disp(x_target_r)
-% disp("y target:");
-% disp(y_target_l)
-% disp(y_target_r)
+
 
 % Need to get middle of the robot and orientation
 

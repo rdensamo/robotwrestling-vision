@@ -64,14 +64,25 @@ for i=1:bagselect0.NumMessages
     rob_theta = atan2(sin(rob_theta),cos(rob_theta)); 
     disp("rotated rob_theta: "); 
     disp(rob_theta * (180/pi)); 
-
     
-% disp("left target"); 
-% disp(x_real_l);
-% disp(y_real_l); 
-% disp("right target"); 
-% disp(x_real_r);
-% disp(y_real_r); 
+    rosinit % Do not need this when roscore already running ?
+% Ros Publisher : 
+msgArray = [rosmessage('std_msgs/Int64 ') rosmessage('std_msgs/Int64 ') rosmessage('std_msgs/Float64')];
+msgArray(1).Data = rob_x_pos; 
+msgArray(2).Data = rob_y_pos;
+msgArray(3).Data = rob_theta;
+%allData = {msgArray.Data};
+
+rob_pub = rospublisher('/robot_pos');
+send(rob_pub, msgArray);
+
+% Ros Subscriber: For testing purposes 
+rob_sub = rossubscriber('/robot_pos');
+% Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
+msgArray2 = receive(sub,10);
+
+rosshutdown % Do not need this when roscore already running ? 
+    
 
     if ( i == 1)
         f = figure;
