@@ -1,4 +1,4 @@
-function [x_pos, y_pos, theta] = trackRobot(filepath, hsv_thresh_l, hsv_thresh_r, vid_name)
+function [rob_x_pos, rob_y_pos, rob_theta] = trackRobot(filepath, hsv_thresh_l, hsv_thresh_r, vid_name)
 % TODO: Fix this function comment 
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 % returns the position and orientation of the robot: x_pos, y_pos and theta 
@@ -27,8 +27,6 @@ for i=1:bagselect0.NumMessages
     pcxyz = readXYZ(msg{1});  
     top_img = reshape(pcrgb,640,480,3); 
     hsv_pts = rgb2hsv(top_img); 
-    %disp("bagselect0.NumMessages:"); 
-   % disp(bagselect0.NumMessages);
     bad = isnan(pcxyz(:,1));
     pcxyz = pcxyz(~bad,:); 
     x_cords = pcxyz(:,1); 
@@ -50,13 +48,30 @@ for i=1:bagselect0.NumMessages
     y_target_r = round(y_target_r); 
     x_real_r = x_cords(x_target_r); 
     y_real_r = y_cords(y_target_r);
+    x_reals = [x_real_l, x_real_r];
+    y_reals = [y_real_l, y_real_r]; 
+    rob_x_pos = mean(x_reals); 
+    rob_y_pos = mean(y_reals); 
     
-disp("left target"); 
-disp(x_real_l);
-disp(y_real_l); 
-disp("right target"); 
-disp(x_real_r);
-disp(y_real_r); 
+    % Must ensure -pi to pi 
+    rob_theta = atan2(rob_y_pos, rob_x_pos);
+    disp("original rob_theta: "); 
+    disp(rob_theta * (180/pi)); 
+    % Want to rotate so bumpers are at pi (180 degrees)
+    % use what Prof. Spletzer talked to Jerett about doing rotation
+    % want to rotate by 90 degrees 
+    rob_theta = rob_theta + (pi/2); 
+    rob_theta = atan2(sin(rob_theta),cos(rob_theta)); 
+    disp("rotated rob_theta: "); 
+    disp(rob_theta * (180/pi)); 
+
+    
+% disp("left target"); 
+% disp(x_real_l);
+% disp(y_real_l); 
+% disp("right target"); 
+% disp(x_real_r);
+% disp(y_real_r); 
 
     if ( i == 1)
         f = figure;

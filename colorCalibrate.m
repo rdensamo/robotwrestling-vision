@@ -3,7 +3,7 @@ function [hsv_thresh_l, hsv_thresh_r, pcxyz] = colorCalibrate(filepath, option)
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 %colorCalibrate gittakes bag file path and opion argument for graphing
 %   This function gets the color calibration from a bag file 
-%   returns the red, green, blue means and stds 
+%   returns the  red, green, blue means and stds 
 
 
 close all;
@@ -70,20 +70,39 @@ x_target_r = round(x_target_r);
 y_target_r = round(y_target_r); 
 x_real_r = x_cords(x_target_r); 
 y_real_r = y_cords(y_target_r);
+x_reals = [x_real_l, x_real_r];
+y_reals = [y_real_l, y_real_r]; 
+rob_x_pos = mean(x_reals); 
+rob_y_pos = mean(y_reals); 
 
-disp("left target"); 
-disp(x_real_l);
-disp(y_real_l); 
-disp("right target"); 
-disp(x_real_r);
-disp(y_real_r); 
+% Must ensure -pi to pi 
+rob_theta = atan2(rob_y_pos, rob_x_pos);
+disp("original rob_theta: "); 
+disp(rob_theta); 
+% Want to rotate so bumpers are at pi (180 degrees)
+% use what Prof. Spletzer talked to Jerett about doing rotation
+% want to rotate by 90 degrees 
+rob_theta = rob_theta + (pi/2); 
+rob_theta = atan2(sin(rob_theta),cos(rob_theta)); 
+disp("rotated rob_theta: "); 
+disp(rob_theta); 
 
-disp("x target"); 
-disp(x_target_l)
-disp(x_target_r)
-disp("y target:");
-disp(y_target_l)
-disp(y_target_r)
+% 
+% disp("left target"); 
+% disp(x_real_l);
+% disp(y_real_l); 
+% disp("right target"); 
+% disp(x_real_r);
+% disp(y_real_r); 
+% 
+% disp("x target"); 
+% disp(x_target_l)
+% disp(x_target_r)
+% disp("y target:");
+% disp(y_target_l)
+% disp(y_target_r)
+
+% Need to get middle of the robot and orientation
 
 if option == 1 
          figure 
