@@ -24,17 +24,37 @@ end
 for i=1:bagselect0.NumMessages
     msg = readMessages(bagselect0,i);
     pcrgb = readRGB(msg{1});
+    pcxyz = readXYZ(msg{1});  
     top_img = reshape(pcrgb,640,480,3); 
     hsv_pts = rgb2hsv(top_img); 
-  
+    disp("bagselect0.NumMessages:"); 
+    disp(bagselect0.NumMessages); 
+    x_cords = pcxyz(:,1); 
+    y_cords = pcxyz(:,2);
 
     % left target
     [bin_l] = seg_color(hsv_pts, hsv_thresh_l);
     [x_target_l, y_target_l] = gettarget(bin_l); 
+    x_target_l = round(x_target_l); 
+    y_target_l = round(y_target_l);
+    x_real_l = x_cords(x_target_l); 
+    y_real_l = y_cords(y_target_l);
+
+    
     % right target 
     [bin_r] = seg_color(hsv_pts, hsv_thresh_r); 
     [x_target_r, y_target_r] = gettarget(bin_r); 
-
+    x_target_r = round(x_target_r);
+    y_target_r = round(y_target_r); 
+    x_real_r = x_cords(x_target_r); 
+    y_real_r = y_cords(y_target_r);
+    
+disp("left target"); 
+disp(x_real_l);
+disp(y_real_l); 
+disp("right target"); 
+disp(x_real_r);
+disp(y_real_r); 
 
     if ( i == 1)
         f = figure;

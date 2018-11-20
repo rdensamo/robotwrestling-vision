@@ -7,6 +7,7 @@
 % 
 % function flat_ring(bagselect0, num_messages)
 %%
+%filepath = 'C:/Users/rdens/Desktop/FALL 2018/CSE281/data/noexp2.bag'
 filepath = fullfile(fileparts(which('ROSbagwithRVIZPointcloud')), 'data', 'oct5bag.bag');
 bag = rosbag(filepath);
 % Select Messages
