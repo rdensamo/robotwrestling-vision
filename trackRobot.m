@@ -65,21 +65,25 @@ for i=1:bagselect0.NumMessages
     disp("rotated rob_theta: "); 
     disp(rob_theta * (180/pi)); 
     
-    rosinit % Do not need this when roscore already running ?
+   rosinit % Do not need this when roscore already running ?
 % Ros Publisher : 
-msgArray = [rosmessage('std_msgs/Int64 ') rosmessage('std_msgs/Int64 ') rosmessage('std_msgs/Float64')];
-msgArray(1).Data = rob_x_pos; 
-msgArray(2).Data = rob_y_pos;
-msgArray(3).Data = rob_theta;
-%allData = {msgArray.Data};
+%msgArray = [rosmessage('std_msgs/Int64') rosmessage('std_msgs/Int64') rosmessage('std_msgs/Float64')];
+msgArray = [rosmessage('std_msgs/String') rosmessage('std_msgs/String') rosmessage('std_msgs/String')];
+% msgArray(1).Data = rob_x_pos; 
+% msgArray(2).Data = rob_y_pos;
+% msgArray(3).Data = rob_theta;
+msgArray(1).Data = 'test1'; 
+msgArray(2).Data = 'test2';
+msgArray(3).Data = 'test3';
+allData = {msgArray.Data};
 
-rob_pub = rospublisher('/robot_pos');
+rob_pub = rospublisher('/robot_pos','std_msgs/String' );
 send(rob_pub, msgArray);
 
 % Ros Subscriber: For testing purposes 
 rob_sub = rossubscriber('/robot_pos');
 % Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
-msgArray2 = receive(sub,10);
+msgArray2 = receive(rob_sub,100); % is this blocking ? asyc ? 
 
 rosshutdown % Do not need this when roscore already running ? 
     
