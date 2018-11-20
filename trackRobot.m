@@ -27,8 +27,10 @@ for i=1:bagselect0.NumMessages
     pcxyz = readXYZ(msg{1});  
     top_img = reshape(pcrgb,640,480,3); 
     hsv_pts = rgb2hsv(top_img); 
-    disp("bagselect0.NumMessages:"); 
-    disp(bagselect0.NumMessages); 
+    %disp("bagselect0.NumMessages:"); 
+   % disp(bagselect0.NumMessages);
+    bad = isnan(pcxyz(:,1));
+    pcxyz = pcxyz(~bad,:); 
     x_cords = pcxyz(:,1); 
     y_cords = pcxyz(:,2);
 

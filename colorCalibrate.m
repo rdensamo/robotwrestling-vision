@@ -1,4 +1,4 @@
-function [hsv_thresh_l, hsv_thresh_r] = colorCalibrate(filepath, option)
+function [hsv_thresh_l, hsv_thresh_r, pcxyz] = colorCalibrate(filepath, option)
 % TODO: Fix this function comment 
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 %colorCalibrate gittakes bag file path and opion argument for graphing
@@ -48,9 +48,10 @@ end
 
 
 init_thresh = [h_sigma, s_sigma, v_sigma]; 
+bad = isnan(pcxyz(:,1));
+pcxyz = pcxyz(~bad,:);    
 x_cords = pcxyz(:,1); 
 y_cords = pcxyz(:,2); 
-
 
 % left target
 [hsv_thresh_l] = getThresh(hsv_pts, mask_l, init_thresh);
@@ -77,12 +78,12 @@ disp("right target");
 disp(x_real_r);
 disp(y_real_r); 
 
-% disp("x target"); 
-% disp(x_target_l)
-% disp(x_target_r)
-% disp("y target:");
-% disp(y_target_l)
-% disp(y_target_r)
+disp("x target"); 
+disp(x_target_l)
+disp(x_target_r)
+disp("y target:");
+disp(y_target_l)
+disp(y_target_r)
 
 if option == 1 
          figure 
