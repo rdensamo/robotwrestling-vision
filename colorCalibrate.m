@@ -145,12 +145,12 @@ if option == 1
             imagesc(top_img);
         hold on; 
         %robot 1 
-        h_l1 = plot(x_target_l1, y_target_l1,'b+', 'markersize', 20,'linewidth',2);  
-        h_r1 = plot(x_target_r1, y_target_r1,'r+', 'markersize', 20,'linewidth',2);  
+        h_l1 = plot(x_target_l1, y_target_l1,'g+', 'markersize', 20,'linewidth',2);  
+        h_r1 = plot(x_target_r1, y_target_r1,'y+', 'markersize', 20,'linewidth',2);  
         
         %robot 2 
-        h_l2 = plot(x_target_l2, y_target_l2,'g+', 'markersize', 20,'linewidth',2);  
-        h_r2 = plot(x_target_r2, y_target_r2,'y+', 'markersize', 20,'linewidth',2);  
+        h_l2 = plot(x_target_l2, y_target_l2,'b+', 'markersize', 20,'linewidth',2);  
+        h_r2 = plot(x_target_r2, y_target_r2,'r+', 'markersize', 20,'linewidth',2);  
         
 end 
 
