@@ -72,6 +72,8 @@ msgArray = [rosmessage('std_msgs/String') rosmessage('std_msgs/String') rosmessa
 msgArray(1).Data = num2str(rob_x_pos);
 msgArray(2).Data = num2str(rob_y_pos); 
 msgArray(3).Data = num2str(rob_theta);
+disp("msgArray:"); 
+disp(msgArray(3).Data ); 
 % msgArray(1).Data = 'test1'; 
 % msgArray(2).Data = 'test2';
 % msgArray(3).Data = 'test3';
@@ -85,7 +87,7 @@ rob_sub = rossubscriber('/robot_pos');
 % Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
 msgArray2 = receive(rob_sub,100); % is this blocking ? asyc ? 
 disp("msgArray2:"); 
-disp(msgArray2(1).Data ); 
+disp(msgArray2(2).Data ); 
 disp(rob_x_pos); 
 
 rosshutdown % Do not need this when roscore already running ? 
