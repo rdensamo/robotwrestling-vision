@@ -20,7 +20,7 @@ if(vid_name == 1)
     v = VideoWriter('robot_tracking_4colors.avi');
     open(v);
 end
-
+  rosinit % Do not need this when roscore already running ?
 for i=1:bagselect0.NumMessages
     msg = readMessages(bagselect0,i);
     pcrgb = readRGB(msg{1});
@@ -104,57 +104,26 @@ for i=1:bagselect0.NumMessages
     disp("rotated rob_theta: "); 
     disp(rob_theta2 * (180/pi)); 
     
-    rosinit % Do not need this when roscore already running ?
+  
 
 % Ros Publisher robot 1 : 
-%msgArray = [rosmessage('std_msgs/Int64') rosmessage('std_msgs/Int64') rosmessage('std_msgs/Float64')];
-msgArray1 = [rosmessage('std_msgs/String') rosmessage('std_msgs/String') rosmessage('std_msgs/String')];
-msgArray1(1).Data = num2str(rob_x_pos1);
-msgArray1(2).Data = num2str(rob_y_pos1); 
-msgArray1(3).Data = num2str(rob_theta1);
-disp("msgArray:"); 
-disp(msgArray1(3).Data ); 
-% msgArray(1).Data = 'test1'; 
-% msgArray(2).Data = 'test2';
-% msgArray(3).Data = 'test3';
-allData = {msgArray1.Data};
+msg1 = rosmessage('geometry_msgs/Pose2D'); 
+rob_pub1 = rospublisher('/robot_pos1','geometry_msgs/Pose2D' );
+msg1.X = rob_x_pos1; 
+msg1.Y = rob_y_pos1; 
+msg1.Theta = rob_theta1; 
+send(rob_pub1, msg1);
 
-rob_pub1 = rospublisher('/robot_pos1','std_msgs/String' );
-send(rob_pub1, msgArray1);
+% Ros Publisher robot 2 :
+msg2 = rosmessage('geometry_msgs/Pose2D');
+msg2.X = rob_x_pos2; 
+msg2.Y = rob_y_pos2; 
+msg2.Theta = rob_theta2; 
+rob_pub2 = rospublisher('/robot_pos2','geometry_msgs/Pose2D' );
+send(rob_pub2, msg2);
 
-% Ros Publisher robot 2 : 
-%msgArray = [rosmessage('std_msgs/Int64') rosmessage('std_msgs/Int64') rosmessage('std_msgs/Float64')];
-msgArray2 = [rosmessage('std_msgs/String') rosmessage('std_msgs/String') rosmessage('std_msgs/String')];
-msgArray2(1).Data = num2str(rob_x_pos2);
-msgArray2(2).Data = num2str(rob_y_pos2); 
-msgArray2(3).Data = num2str(rob_theta2);
-disp("msgArray:"); 
-disp(msgArray2(3).Data ); 
-% msgArray2(1).Data = 'test1'; 
-% msgArray2(2).Data = 'test2';
-% msgArray2(3).Data = 'test3';
-allData = {msgArray2.Data};
 
-rob_pub2 = rospublisher('/robot_pos2','std_msgs/String' );
-send(rob_pub2, msgArray2);
 
-% Ros Subscriber: For testing purposes robot 1  
-rob_sub1 = rossubscriber('/robot_pos1');
-% Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
-recArray1 = receive(rob_sub1,100); % is this blocking ? asyc ? 
-disp("recArray1:"); 
-disp(recArray1(1).Data ); 
-disp(rob_x_pos1); 
-
-% Ros Subscriber: For testing purposes robot 2  
-rob_sub2 = rossubscriber('/robot_pos2');
-% Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
-recArray2 = receive(rob_sub2,100); % is this blocking ? asyc ? 
-disp("recArray2:"); 
-disp(recArray2(1).Data ); 
-disp(rob_x_pos2); 
-
-rosshutdown % Do not need this when roscore already running ? 
     
 
     if ( i == 1)
@@ -185,6 +154,8 @@ rosshutdown % Do not need this when roscore already running ?
         h_l2 = plot(x_target_l2, y_target_l2,'b+', 'markersize', 20,'linewidth',2);  
         h_r2 = plot(x_target_r2, y_target_r2,'r+', 'markersize', 20,'linewidth',2);  
 end
+
+rosshutdown % Do not need this when roscore already running ? 
 
 if(vid_name == 1)
     close(v);
