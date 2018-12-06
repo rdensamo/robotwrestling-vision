@@ -12,7 +12,7 @@ bagselect0 = select(bag, 'Topic', '/camera/depth_registered/points');
 close all;
 
 % Gets the first frame 
-msg = readMessages(bagselect0,1);
+msg = readMessages(bagselect0,64);
 % Extracts XYZ points from PointCloud2 object 
 pc = readXYZ(msg{1});
 % Removing bad points 

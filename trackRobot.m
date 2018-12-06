@@ -17,7 +17,7 @@ close all;
 % TODO: Install VLC to view this video format
 if(vid_name == 1)
     pause on;  %enable pause function
-    v = VideoWriter('robot_tracking_4colors.avi');
+    v = VideoWriter('two robots_yellow_steps.avi');
     open(v);
 end
   rosinit % Do not need this when roscore already running ?
