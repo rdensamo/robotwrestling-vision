@@ -6,7 +6,7 @@ function [flat_points] = ringCalibrateLive(option)
 %   postion. Gets only one frame. 
 
 close all; 
-topic = '/camera/depth_registered/points'
+topic = '/camera/depth_registered/points';
 ring_sub = rossubscriber(topic);
 % Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
 ring_msg1 = receive(ring_sub,100); 
