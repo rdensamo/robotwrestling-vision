@@ -1,4 +1,4 @@
-function [track_pos_r1, track_pos_r2] = trackRobot(hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, vid_name)
+function [track_pos_r1, track_pos_r2] = trackRobotLive(hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, x_raw_ctr, y_raw_ctr, vid_name)
 % TODO: Fix this function comment 
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 % returns the position and orientation of the robot: x_pos, y_pos and theta 

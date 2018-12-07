@@ -9,7 +9,7 @@ disp("Calibrate and segment ring center");
 RingCenterLiveScript
 
 disp("Flattening Ring Plane. Make sure camera and robots are ready and still."); 
-pause(5); 
+pause(20); 
 flat_points = ringCalibrateLive(1); 
 pause(10); 
 
@@ -20,7 +20,7 @@ pause(15);
 
 disp("Starting match ..."); 
 %TODO: Make another version of ringCalibrateLive(1); 
- [track_pos_r1, track_pos_r2]= trackRobotLive(hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, x_raw, y_raw], 0);
+ [track_pos_r1, track_pos_r2]= trackRobotLive(hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, x_raw_ctr, y_raw_ctr, 0);
 %  catch
 % Close ROS network 
 disp(" Something went wrong. Closing ros master node "); 
