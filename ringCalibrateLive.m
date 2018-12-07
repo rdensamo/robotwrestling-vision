@@ -16,10 +16,10 @@ pc = readXYZ(ring_msg1);
 % Removing bad points 
 bad = isnan(pc(:,1));
 pc = pc(~bad,:);    
+ptCloud = pointCloud(pc);
 
 % Plots the data is this argument is 1  
 if (option == 1)
-    ptCloud = pointCloud(pc);
     save('pointCloud.mat', 'ptCloud');
     load('pointCloud.mat')
     figure

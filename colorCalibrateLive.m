@@ -64,6 +64,7 @@ y_cords = pcxyz(:,2);
 [x_target_l1, y_target_l1] = gettarget(bin_l1);
 x_target_l1 = round(x_target_l1); 
 y_target_l1 = round(y_target_l1);
+% Index into flattened points 
 x_real_l1 = x_cords(x_target_l1); 
 y_real_l1 = y_cords(y_target_l1);
 
@@ -113,12 +114,12 @@ rob_theta2 = rob_theta2 + (pi/2);
 
 
 % Return Values and Printing 
-start_pos_r1 = [rob_x_pos1, rob_x_pos1, rob_theta1]; 
-start_pos_r2 = [rob_x_pos1, rob_x_pos1, rob_theta1]; 
-disp("rob1 start pos: "); 
-fprintf('X1: %d, Y1: %d, Theta1: %d \n',rob_x_pos1, rob_y_pos1, rob_theta1);
-disp("rob2 start pos: "); 
-fprintf('X2: %d, Y2: %d, Theta2: %d \n',rob_x_pos2, rob_y_pos2, rob_theta2);
+start_pos_r1 = [rob_x_pos1, rob_y_pos1, rob_theta1]; 
+start_pos_r2 = [rob_x_pos2, rob_y_pos2, rob_theta2]; 
+disp("rob1 start pos (printing theta in degrees): "); 
+fprintf('X1: %d, Y1: %d, Theta1: %d \n',rob_x_pos1, rob_y_pos1, rob_theta1*(180/pi));
+disp("rob2 start pos (printing theta in degrees): "); 
+fprintf('X2: %d, Y2: %d, Theta2: %d \n',rob_x_pos2, rob_y_pos2, rob_theta2*(180/pi));
  
 % Need to get middle of the robot and orientation
 % TODO: Include error checking for bad estimates 

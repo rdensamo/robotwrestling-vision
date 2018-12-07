@@ -1,4 +1,4 @@
-function [rob_x_pos1, rob_y_pos1, rob_theta1, rob_x_pos2, rob_y_pos2, rob_theta2] = trackRobot(filepath, hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, vid_name)
+function [track_pos_r1, track_pos_r2] = trackRobot(hsv_thresh_l1, hsv_thresh_r1, hsv_thresh_l2, hsv_thresh_r2, vid_name)
 % TODO: Fix this function comment 
 % TODO: ONCE YOU WRITE ROS SUBSCRIBER SWITCH BAG PARAMETER WITH TOPIC
 % returns the position and orientation of the robot: x_pos, y_pos and theta 
@@ -7,11 +7,13 @@ function [rob_x_pos1, rob_y_pos1, rob_theta1, rob_x_pos2, rob_y_pos2, rob_theta2
 %   Detailed explanation goes here
 
 
+close all; 
+topic = '/camera/depth_registered/points';
+track_sub = rossubscriber(topic);
+% Receive data from the subscriber as a ROS message. Specify a 10 second timeout.
+track_msg = receive(track_sub,100); 
 
-% Gets ros bag that has the depth and color data (topic)
-bag = rosbag(filepath);
-bagselect0 = select(bag, 'Topic', '/camera/depth_registered/points');
-close all;
+
 
 % Want to record video
 % TODO: Install VLC to view this video format
@@ -20,21 +22,15 @@ if(vid_name == 1)
     v = VideoWriter('two robots_yellow_steps.avi');
     open(v);
 end
-  rosinit %TODO: Remove this. Should happen outside Do not need this when roscore already running ?
-while(1)
-    % Ros Subscriber: For testing purposes robot 1  
-    main_sub = rossubscriber('/camera/depth_registered/points');
-end 
+ 
 
-%old code 
-for i=1:bagselect0.NumMessages
-    msg = readMessages(bagselect0,i);
-    pcrgb = readRGB(msg{1});
-    pcxyz = readXYZ(msg{1});  
+
+while(1) 
+    pcrgb = readRGB(track_msg);
+    % TODO: Very inefficient, need to optimize 
+    pcxyz = ringCalibrateLive(0); 
     top_img = reshape(pcrgb,640,480,3); 
     hsv_pts = rgb2hsv(top_img); 
-    bad = isnan(pcxyz(:,1));
-    pcxyz = pcxyz(~bad,:); 
     x_cords = pcxyz(:,1); 
     y_cords = pcxyz(:,2);
     
@@ -87,29 +83,13 @@ for i=1:bagselect0.NumMessages
     % robot 1
     % Must ensure -pi to pi 
     rob_theta1 = atan2(rob_y_pos1, rob_x_pos1);
-    disp("original rob_theta: "); 
-    disp(rob_theta1 * (180/pi)); 
-    % Want to rotate so bumpers are at pi (180 degrees)
-    % use what Prof. Spletzer talked to Jerett about doing rotation
-    % want to rotate by 90 degrees 
     rob_theta1 = rob_theta1 + (pi/2); 
-    rob_theta1 = atan2(sin(rob_theta1),cos(rob_theta1)); 
-    disp("rotated rob_theta: "); 
-    disp(rob_theta1 * (180/pi)); 
  
     % robot 2
     % Must ensure -pi to pi 
     rob_theta2 = atan2(rob_y_pos2, rob_x_pos2);
-    disp("original rob_theta: "); 
-    disp(rob_theta2 * (180/pi)); 
-    % Want to rotate so bumpers are at pi (180 degrees)
-    % use what Prof. Spletzer talked to Jerett about doing rotation
-    % want to rotate by 90 degrees 
     rob_theta2 = rob_theta2 + (pi/2); 
-    rob_theta2 = atan2(sin(rob_theta2),cos(rob_theta2)); 
-    disp("rotated rob_theta: "); 
-    disp(rob_theta2 * (180/pi)); 
-    
+   
   
 
 % Ros Publisher robot 1 : 
@@ -129,7 +109,14 @@ rob_pub2 = rospublisher('/robot_pos2','geometry_msgs/Pose2D' );
 send(rob_pub2, msg2);
 
 
-
+% Return Values and Printing 
+track_pos_r1 = [rob_x_pos1, rob_y_pos1, rob_theta1]; 
+track_pos_r2 = [rob_x_pos2, rob_y_pos2, rob_theta2]; 
+disp("rob1 tracking pos (printing theta in degrees): "); 
+fprintf('X1: %d, Y1: %d, Theta1: %d \n',rob_x_pos1, rob_y_pos1, rob_theta1*(180/pi));
+disp("rob2 tracking pos (printing theta in degrees): "); 
+fprintf('X2: %d, Y2: %d, Theta2: %d \n',rob_x_pos2, rob_y_pos2, rob_theta2*(180/pi));
+ 
     
 
     if ( i == 1)
@@ -161,7 +148,6 @@ send(rob_pub2, msg2);
         h_r2 = plot(x_target_r2, y_target_r2,'r+', 'markersize', 20,'linewidth',2);  
 end
 
-rosshutdown % Do not need this when roscore already running ? 
 
 if(vid_name == 1)
     close(v);
