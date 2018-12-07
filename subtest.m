@@ -1,5 +1,5 @@
 %subtest
-rosinit; 
+rosinit; % TODO: remove this. Should happen outside 
 
 while(1)
 % Ros Subscriber: For testing purposes robot 1  
