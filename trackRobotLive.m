@@ -91,6 +91,11 @@ while(1)
     rob_theta2 = rob_theta2 + (pi/2); 
    
   
+% Subtract offsets
+rob_x_pos1 = addsubOffset(x_raw_ctr, rob_x_pos1);
+rob_y_pos1 = addsubOffset(y_raw_ctr, rob_y_pos1);
+rob_x_pos2 = addsubOffset(x_raw_ctr,rob_x_pos2);
+rob_y_pos2 = addsubOffset(y_raw_ctr, rob_y_pos2);
 
 % Ros Publisher robot 1 : 
 msg1 = rosmessage('geometry_msgs/Pose2D'); 

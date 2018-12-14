@@ -20,7 +20,7 @@ if(vid_name == 1)
     v = VideoWriter('two robots_yellow_steps.avi');
     open(v);
 end
-  rosinit % Do not need this when roscore already running ?
+%  rosinit % Do not need this when roscore already running ?
 for i=1:bagselect0.NumMessages
     msg = readMessages(bagselect0,i);
     pcrgb = readRGB(msg{1});

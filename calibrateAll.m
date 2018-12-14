@@ -9,6 +9,7 @@
 % debugging red color that has no target in steps - target appears
 %mypath = '/home/vader/capstonedata/steps2still1rob.bag';
 % changed red color with yellow in steps (works but lighting could change)
+rosinit; 
 mypath = '/home/vader/capstonedata/steps3mov.bag';
 flat_points = ringCalibrate(mypath, 1);
 pause(20); 
